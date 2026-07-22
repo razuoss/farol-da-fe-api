@@ -1,5 +1,5 @@
 # TERMOS DE USO
-# Farol Devocional API
+# Farol da Fé API
 
 Este repositório e seus arquivos são destinados a apoiar a reflexão cristã de acordo com os princípios da fé protestante. O uso dos materiais aqui disponibilizados está condicionado à aceitação integral dos termos abaixo.
 
@@ -28,6 +28,6 @@ Usuários e colaboradores podem reportar conteúdos impróprios ou inconsistente
 Os presentes Termos poderão ser atualizados conforme necessidade do projeto, sempre visando legalidade, ética e aprimoramento técnico. O uso contínuo implica aceitação das versões atualizadas.
 
 
-Uberlândia/MG, Brasil — 2025
+Uberlândia/MG, Brasil — 2026
 
 

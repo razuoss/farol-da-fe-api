@@ -2,12 +2,13 @@
 
 * **Status:** Aceito
 * **Data:** 2025-10-06
+* **Update:** 2026-07-21
 
 ## Contexto
 
-Para iniciar o projeto, era necessário definir a stack tecnológica principal para a construção da API. As restrições eram: a tecnologia deveria ser moderna, robusta, amplamente utilizada no mercado, possuir um ecossistema maduro e ser compatível com as camadas gratuitas de plataformas de nuvem. A preferência era por uma linguagem compilada e de alta performance E que fosse de domínio técnico do time.
+Para iniciar o projeto, era necessário definir a stack tecnológica principal para a construção da API. As restrições eram: a tecnologia deveria ser moderna, robusta, amplamente utilizada no mercado, possuir um ecossistema maduro e ser compatível com as camadas gratuitas de plataformas de nuvem. A preferência era por uma linguagem compilada e de alta performance e que fosse de domínio técnico do desenvolvedor.
 
-A opção considerada foi um módulo Java único, construido com frameworks como Spring Boot ou Quarkus.
+A opção considerada foi um módulo Java único, construido com frameworks como Spring Boot.
 
 ## Decisão
 
@@ -15,7 +16,7 @@ Adotaremos a seguinte stack de tecnologia para o MVP:
 
 1.  **Linguagem: Java 21 (LTS)**. A escolha pela versão 21, em detrimento da 17, se baseia no equilíbrio entre uma versão atualizada, estável e com suporte prolongado (LTS), que aborda recursos modernos como Virtual Threads - ideais para aplicações I/O-bound como a nossa.
 
-2.  **Framework: Spring Boot**. Embora Quarkus seja uma opção performática, Spring Boot foi escolhido por seu vasto ecossistema, imensa quantidade de documentação e recursos de aprendizado, e por se alinhar com o objetivo de aprofundar o conhecimento e habilidade técnica do time de desenvolvimento em uma tecnologia central no mercado.
+2.  **Framework: Spring Boot**. Embora Quarkus seja uma opção performática, Spring Boot foi escolhido por seu vasto ecossistema, imensa quantidade de documentação e recursos de aprendizado, e por se alinhar com o objetivo de aprofundar o conhecimento e habilidade técnica do desenvolvedor em uma tecnologia central no mercado.
 
 3.  **Build Tool: Maven**. Escolhido por sua ubiquidade e integração simplificada com ferramentas de CI/CD como GitHub Actions e SonarCloud.
 

@@ -2,10 +2,11 @@
 
 * **Status:** Aceito
 * **Data:** 2025-10-06
+* **Update:** 2026-07-21
 
 ## Contexto
 
-Sendo um recurso para apoiar digitalmente a fé cristã, entendemos não ser coerente ter fins comerciais, logo o licenciamento do projeto precisa refletir seu propósito. As metas eram: (a) proibir inequivocamente o uso comercial; (b) permitir que a comunidade use, estude e compartilhe o projeto; e (c) incentivar contribuições, garantindo que as melhorias permaneçam dentro do mesmo ecossistema não-comercial. 
+Sendo um recurso especifico de estudo para apoiar digitalmente a fé cristã, entendemos que não é destinado a todo público e não ser coerente ter fins comerciais. Dessa forma, o licenciamento do projeto precisa refletir seu propósito. As metas são: (a) proibir inequivocamente o uso comercial; (b) permitir que a comunidade use, estude e compartilhe o projeto; e (c) incentivar contribuições, garantindo que as melhorias permaneçam dentro do mesmo ecossistema não-comercial. 
 
 ## Decisão
 

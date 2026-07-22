@@ -1,6 +1,6 @@
-# Guia de Padrões e Contribuições - Farol Devocional
+# Guia de Padrões e Contribuições - Farol da Fé
 
-Agradecemos o seu interesse no projeto Farol Devocional!
+Agradecemos o seu interesse no projeto Farol da Fé!
 
 **Status Atual do Projeto:**
 atualmente, o projeto está em sua fase inicial de desenvolvimento (MVP), sendo construído por seu mantenedor principal. Neste momento, **não estamos aceitando contribuições externas de código**. O objetivo é estabelecer uma base sólida e uma primeira versão funcional que servirá como peça de portfólio.
@@ -14,7 +14,7 @@ Este documento serve como um registro dos padrões de engenharia que seguimos e 
 ## 🚀 Como Rodar o Projeto Localmente
 
 1.  **Faça um Fork** do repositório para a sua própria conta no GitHub.
-2.  **Clone** o seu fork para a sua máquina local: `git clone https://github.com/SEU-USUARIO/farol-devocional.git`
+2.  **Clone** o seu fork para a sua máquina local: `git clone https://github.com/SEU-USUARIO/farol-da-fe.git`
 3.  **Instale as dependências** do projeto: `mvn clean install`
 4.  **Execute a aplicação** localmente para garantir que tudo está funcionando: `mvn spring-boot:run`
 

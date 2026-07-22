@@ -1,11 +1,11 @@
-# ADR-006: Definição de Métricas de Serviço e Estimativas de Carga
+# ADR-007: Definição de Métricas de Serviço e Estimativas de Carga
 
-* **Status:** Aceito
-* **Data:** 2025-10-08
+* **Status:** Proposto
+* **Data:** 2026-07-21
 
 ## Contexto
 
-Com a arquitetura definida no Google Cloud Run, é fundamental estabelecer os requisitos não-funcionais (NFRs) para garantir que a aplicação opere de forma confiável, performática e, crucialmente, dentro dos limites da camada gratuita ("Always Free"). Isso envolve definir metas mensuráveis (SLOs) e validar as estimativas de carga de usuários contra as cotas oferecidas pela plataforma.
+Este documento define os requisitos não-funcionais (NFRs) e as metas de serviço (SLOs) para a **Fase 2** do projeto, quando a aplicação for migrada para o **Google Cloud Run**, conforme definido no `ADR-004`. O objetivo é garantir que a arquitetura no GCP opere de forma confiável, performática e dentro dos limites da camada gratuita ("Always Free").
 
 ## Decisão
 
