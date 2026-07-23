@@ -1,15 +1,15 @@
-# ADR-007: Definição de Métricas de Serviço e Estimativas de Carga
+# ADR-007: Definição de Métricas de Serviço, Estimativas de Carga e Observabilidade
 
-* **Status:** Proposto
+* **Status:** Aceito
 * **Data:** 2026-07-21
 
 ## Contexto
 
-Este documento define os requisitos não-funcionais (NFRs) e as metas de serviço (SLOs) para a **Fase 2** do projeto, quando a aplicação for migrada para o **Google Cloud Run**, conforme definido no `ADR-004`. O objetivo é garantir que a arquitetura no GCP opere de forma confiável, performática e dentro dos limites da camada gratuita ("Always Free").
+Este documento define os requisitos não-funcionais (NFRs), as metas de serviço (SLOs) e a ferramenta de observabilidade para a **Fase 2** do projeto, quando a aplicação for migrada para o **Google Cloud Run**, conforme definido no `ADR-004`. O objetivo é garantir que a arquitetura no GCP opere de forma confiável, performática e dentro dos limites da camada gratuita ("Always Free").
 
 ## Decisão
 
-Foram definidas as metas de serviço (SLOs), a estimativa de carga, e as estratégias de resiliência para o MVP.
+Foram definidas as metas de serviço (SLOs), a estimativa de carga, as estratégias de resiliência e a ferramenta de coleta de métricas para o MVP.
 
 **Análise das Cotas "Always Free" do Cloud Run:**
 
@@ -38,17 +38,21 @@ Foram definidas as metas de serviço (SLOs), a estimativa de carga, e as estrat�
 
 ### 2. Estratégias de Resiliência e Controle
 * **Controle de Custos:** Será criado um **Orçamento de Faturamento** no GCP de R$ 10,00, com uma ação programática para **desativar o faturamento** do projeto caso o limite seja atingido, funcionando como uma trava de segurança.
-* **Rate Limiting:** Será implementado na aplicação um limitador de taxa (rate limiter) em memória (via `Bucket4j`) para proteger contra picos de tráfego, abuso e requisições em loop. A meta inicial será de 4 requisições por minuto por IP.
-* **Timeouts:** Será implementado um **timeout de 30 segundos** na chamada para a API externa do Gemini (via `Resilience4j`). Se a chamada exceder este tempo, a aplicação irá interrompê-la e retornar um erro controlado (`504 Gateway Timeout`), evitando que recursos fiquem presos.
-* **Otimização de Concorrência:** A aplicação será configurada para utilizar **Virtual Threads (Java 21)**, e o serviço no Cloud Run terá seu máximo de solicitações simultâneas por instância ajustado para **10**.
+* **Rate Limiting:** Será implementado na aplicação um limitador de taxa (rate limiter) em memória (via `Bucket4j`) para proteger contra picos de tráfego, abuso e requisições em loop. A meta será de 2 requisições por minuto por usuário (`2 req/min`).
+* **Timeouts e Circuit Breaker:** Será implementado um timeout de **30 segundos** e o padrão *Circuit Breaker* na chamada para a API externa do Gemini via `Resilience4j` (ADR-011).
+* **Otimização de Concorrência:** A aplicação será configurada para utilizar **Virtual Threads (Java 21)** (ADR-001), e o serviço no Cloud Run terá seu máximo de solicitações simultâneas por instância ajustado para **10**.
+
+### 3. Ferramenta de Coleta e Observabilidade
+* **Micrometer + Spring Boot Actuator:** A coleta técnica das métricas definidas nos SLOs (latência p95 da IA, taxa de erros HTTP e uso de CPU/RAM) será feita via **Micrometer**, expondo o endpoint `/actuator/prometheus`.
+* **Monitoramento na Nuvem:** No Cloud Run, as métricas serão coletadas nativamente pelo **Google Cloud Monitoring**, com alertas configurados por e-mail caso a latência p95 ou a taxa de erros ultrapassem as metas do SLO.
 
 ## Consequências
 
 ### Positivas
-* O projeto é concebido com resiliência desde o início, em vez de ser uma preocupação tardia.
+* O projeto é concebido com observabilidade e resiliência desde o início.
 * O risco financeiro é ativamente gerenciado e limitado a um valor simbólico e controlado.
 * A arquitetura da aplicação é otimizada para tarefas I/O-bound, garantindo o uso eficiente dos recursos de CPU e o cumprimento das cotas da camada gratuita.
-* As decisões tornam a aplicação mais robusta contra comportamentos inesperados (picos de tráfego, lentidão de APIs externas).
+* Permite diagnosticar gargalos de tempo de resposta em tempo real no dashboard da nuvem.
 
 ### Negativas
-* A implementação de resiliência (Rate Limiting, Timeouts) adiciona novas dependências (`Bucket4j`, `Resilience4j`) e aumenta ligeiramente o escopo de desenvolvimento do MVP.
+* A implementação de resiliência (Rate Limiting, Circuit Breaker) e métricas adiciona dependências (`Bucket4j`, `Resilience4j`, `micrometer-registry-prometheus`).

@@ -12,10 +12,10 @@ O fluxo de dados da aplicação ocorre da seguinte forma:
 
 ---
 
-## 2. Estrutura da Aplicação (1 Microserviço Modular)
+## 2. Estrutura da Aplicação
 
-### 2.1 Decisão Arquitetural: Monolito Modular
-Foi definida a implementação da aplicação como **1 único microserviço modular**, em detrimento de uma arquitetura distribuída em múltiplos microserviços. 
+### 2.1 Decisão Arquitetural: 
+Foi definida a implementação da aplicação como **1 único microserviço**, em detrimento de uma arquitetura distribuída em múltiplos microserviços. 
 
 Essa decisão baseia-se nos seguintes fatores:
 * **Eficiência de Infraestrutura e Custos:** Operação simplificada na camada gratuita (*Free Tier*) de plataformas Serverless (como Google Cloud Run ou Render), reduzindo impactos de *cold start* e otimizando o consumo de CPU e memória (ADR-004).
@@ -31,8 +31,8 @@ A separação de responsabilidades é mantida através do padrão de Arquitetura
 
 ## 3. Endpoints da API (Contratos REST)
 
-### 3.1 Endpoint Principal do MVP: `POST /v1/explicacao`
-Endpoint REST para solicitação de explicação e exegese de um texto ou tema bíblico.
+### 3.1 Endpoint Principal do MVP: `POST /v1/exegese`
+Endpoint REST para solicitação de exegese bíblica (análise do contexto histórico, público-alvo, texto original e aplicação prática) conforme definido no ADR-008.
 
 **Payload de Entrada (JSON):**
 ```json
@@ -52,7 +52,7 @@ Endpoint REST para solicitação de explicação e exegese de um texto ou tema b
 }
 ```
 
-> **Nota de Extensibilidade:** Endpoints futuros como `POST /v1/devocional` e `POST /v1/sermao` reutilizarão a mesma estrutura arquitetural.
+> **Nota de Extensibilidade (ADR-008):** Endpoints futuros como `POST /v1/compara-traducoes`, `POST /v1/devocional` e `POST /v1/sermao` reutilizarão a mesma estrutura arquitetural.
 
 ---
 
@@ -78,7 +78,7 @@ Endpoint responsável por receber as notificações enviadas pela API de Webhook
     "chat": {
       "id": 987654
     },
-    "text": "/explicar Filipenses 4:13"
+    "text": "/exegese Filipenses 4:13"
   }
 }
 ```
@@ -88,8 +88,7 @@ Endpoint responsável por receber as notificações enviadas pela API de Webhook
 ## 4. Comunicação com a IA (GenAI)
 
 ### 4.1 Natureza da Comunicação: Síncrona
-A comunicação com a API do Google Gemini (ADR-006) é realizada via chamadas **HTTP POST síncronas**.
-* **Ausência de Polling:** A resposta é retornada diretamente no corpo da resposta HTTP, dispensando verificações periódicas de status (`GET /status`).
+A comunicação com a API do Google Gemini (ADR-006) é realizada via chamadas **HTTP POST síncronas**, dispensando verificações periódicas de status (`GET /status`).
 * **Uso de Virtual Threads (Java 21):** O tempo de espera da resposta do modelo de IA é gerenciado por Virtual Threads (ADR-001). A thread do sistema operacional permanece liberada durante o bloqueio de I/O, otimizando a concorrência e o uso de CPU.
 
 ### 4.2 Recursos do Provedor de IA
@@ -123,13 +122,35 @@ A comunicação com a API do Google Gemini (ADR-006) é realizada via chamadas *
    * A aplicação retorna `HTTP 500 Internal Server Error` com fallback amigável: *"Não foi possível estruturar a resposta do estudo. Por favor, reformule a pergunta."*
 
 4. **Falha na Gravação Assíncrona de Auditoria (Google Sheets Offline / Indisponível):**
-   * Como a gravação ocorre de forma não-bloqueante (`@Async` / *fire-and-forget*), qualquer falha na integração com o Google Sheets é registrada nos logs da aplicação para monitoramento, **sem interromper ou afetar o retorno da resposta ao usuário**.
+   * Como a gravação ocorre de forma não-bloqueante (`@Async`), qualquer falha na integração com o Google Sheets é registrada nos logs da aplicação para monitoramento, **sem interromper ou afetar o retorno da resposta ao usuário**.
 
 ---
 
 ## 6. Diagramas Arquiteturais (Mermaid)
 
-### 6.1 Diagrama de Componentes
+### 6.1 Diagrama de Fluxo de Dados
+
+```mermaid  
+graph TD
+    U["👤 Usuário"]
+    TG["📱 Telegram Bot API"]
+
+    subgraph "Farol da Fé (Container)"
+        API["🌐 API Spring Boot<br/>Java 21 + Virtual Threads"]
+    end
+
+    IA["🤖 IA Generativa<br/>Google Gemini"]
+    SHEETS["📊 Google Sheets<br/>Auditoria MVP"]
+
+    U -->|Telegram| TG
+    TG -->|Webhook HTTP POST| API
+    API -->|HTTP POST síncrono| IA
+    API -.->|HTTP POST assíncrono| SHEETS
+```
+
+---
+
+### 6.2 Diagrama de Componentes
 
 ```mermaid
 graph TD
@@ -140,13 +161,13 @@ graph TD
 
     subgraph "API Farol da Fé (Spring Boot / Java 21)"
         subgraph "Camada de Entrada (Controllers)"
-            C_REST["ExplicacaoController (/v1/explicacao)"]
+            C_REST["ExegeseController (/v1/exegese)"]
             C_TG["TelegramWebhookController (/v1/webhooks/telegram)"]
             GUARD["Filtro de Segurança & Guardrail"]
         end
 
         subgraph "Camada de Domínio (Service)"
-            SVC["ExplicacaoService"]
+            SVC["ExegeseService"]
         end
 
         subgraph "Portas de Saída (Ports)"
@@ -165,7 +186,7 @@ graph TD
         SHEETS["Google Sheets API"]
     end
 
-    APP -->|1. POST /v1/explicacao| C_REST
+    APP -->|1. POST /v1/exegese| C_REST
     BOT -->|1. POST /v1/webhooks/telegram| C_TG
 
     C_REST --> GUARD
@@ -187,7 +208,8 @@ graph TD
 
 ---
 
-### 6.2 Diagrama de Sequência (Fluxo Principal e Tratamento de Falhas)
+### 6.3 Diagrama de Sequência 
+### Fluxo Principal e Tratamento de Falhas
 
 ```mermaid
 sequenceDiagram
@@ -195,11 +217,11 @@ sequenceDiagram
     actor U as Cliente / Usuário
     participant API as Controller
     participant G as Guardrail Filter
-    participant S as ExplicacaoService
+    participant S as ExegeseService
     participant IA as GenAiAdapter (Gemini)
     participant AUD as GoogleSheetsAdapter (Auditoria)
 
-    U->>API: 1. POST /v1/explicacao (Payload)
+    U->>API: 1. POST /v1/exegese (Payload)
     activate API
     
     API->>G: 2. Sanitização (Máx 1.000 chars & Anti-Injection)
@@ -225,7 +247,7 @@ sequenceDiagram
             S-->>API: 6. Retorna Resposta de Domínio
             deactivate S
             
-            API-->>U: 7. HTTP 200 OK (JSON do Estudo)
+            API-->>U: 7. HTTP 200 OK (JSON do Estudo Exegético)
             
             opt Gravação Assíncrona (@Async / Fire-and-Forget)
                 API-->>AUD: 8. Registra log de auditoria em background
