@@ -1,13 +1,18 @@
 # ADR-004: Plataforma de Hospedagem e Estratégia de Containerização
 
-* **Status:** Em análise
+* **Status:** Aceito
 * **Data:** 2025-10-07
+* **Update:** 2026-07-21
 
 ## Contexto
 
 AA seleção da plataforma de nuvem é uma decisão fundamental que impacta custo, performance, complexidade e o fluxo de trabalho de CI/CD. Diversas opções foram consideradas, dentre as principais uso 100% no Render, uma abordagem híbrida Render+ , Render + GCP, 100% Azure e 100% GCP. Cada opção apresentava trade-offs significativos. A principal restrição é a necessidade de operar em uma camada mais robusta possível que menor custo, com suporte a contêineres Docker e que permitisse a segregação de ambientes de Produção e Homologação.
 
-Acerca dos limites atuais para cada plataforma:
+As principais opções PaaS/CaaS (como Render e Google Cloud Run) foram analisadas. A análise crítica se concentrou em:
+1.  **Modelo de Custo:** A generosidade e o funcionamento da camada gratuita.
+2.  **Recursos de Hardware:** Limites de CPU e, crucialmente, de Memória RAM (512MB no Render vs. alocação dinâmica no GCP).
+3.  **Curva de Aprendizado e Velocidade de Deploy:** Facilidade de configuração inicial.
+4.  **Integração com Ecossistema:** Facilidade de integração com outros serviços (neste caso, Google Sheets).
 
     * Render - Plano Hobby (Gratuito):
         - Instâncias: 1 instância/projeto por conta.
@@ -49,11 +54,15 @@ Cenários estimados:
 
 ## Decisão
 
-Uma premissa é que adotaremos a **containerização da aplicação com Docker** para possibilitar melhor portabilidade. 
+Adotaremos a **containerização da aplicação com Docker** e uma **estratégia de hospedagem em duas fases**:
 
-O projeto será hospedado inicialmente no Render para as fases de desenvolvimento e primeiros MVPs. APós amadurecimento das entregas, migraremos para o **Google Cloud Platform (GCP)**, utilizando o **Google Cloud Run** para todos os ambientes (Produção e Homologação).
+1.  **Fase 1 (MVP): Hospedagem no Render.**
+    *   **Justificativa:** Priorizar a velocidade de desenvolvimento e a entrega rápida de um MVP funcional. A simplicidade e a baixa curva de aprendizado do Render são ideais para esta fase, permitindo foco total na lógica da aplicação.
+    *   **Risco Aceito:** O limite de 512MB de RAM é um risco conhecido. A aplicação será monitorada e, caso se torne um gargalo, a migração para o GCP será acelerada.
 
-A decisão de unificar a plataforma foi tomada priorizando o princípio de **Paridade de Ambientes (Environment Parity)**, um pilar de DevOps que garante a máxima consistência entre o que é testado e o que é implantado em produção. Embora a curva de aprendizado inicial do GCP seja maior que a de plataformas PaaS mais simples, os benefícios a longo prazo de uma infraestrutura homogênea, performática e escalável superam a conveniência inicial.
+2.  **Fase 2 (Pós-MVP): Migração para o Google Cloud Platform (GCP).**
+    *   **Gatilho:** Após a validação do MVP ou caso o limite de recursos do Render se torne um problema.
+    *   **Justificativa:** Adotar uma plataforma mais robusta, escalável e com melhor integração com o ecossistema Google (Sheets, etc.). A migração será tratada como uma dívida técnica planejada.
 
 O Render foi escolhido para a fase inicial por ser de fácil configuração e atender satisfatoriamente as premissas. SUas vantagens são, mas não limitadas a: 
 1.  **Facilidade de Uso:** Interface intuitiva e configuração simplificada, permitindo um deploy rápido e sem a necessidade de grande conhecimento em infraestrutura.
@@ -68,10 +77,11 @@ O Google Cloud Run foi escolhido como plataforma única por:
 ## Consequências
 
 ### Positivas
-* **Paridade de Ambientes:** O uso de uma única plataforma garante consistência entre os ambientes de Homologação e Produção, reduzindo o risco de bugs específicos de ambiente, e um melhor controle técnico e financeiro.
-* **Gestão Simplificada (a longo prazo):** Toda a configuração de infraestrutura, segredos e deploys fica centralizada no ecossistema GCP, com um único padrão de ferramentas e scripts.
-* **Performance Consistente:** Ambos os ambientes se beneficiam do desempenho otimizado do Cloud Run.
+* **Agilidade no MVP:** A decisão de iniciar no Render acelera a entrega da primeira versão funcional do projeto.
+* **Decisão Baseada em Dados:** A migração para o GCP será feita com base na necessidade real, não apenas em uma premissa teórica.
+* **Foco no Produto:** Permite que o esforço inicial seja concentrado no desenvolvimento da API, não em infraestrutura complexa.
 
 ### Negativas
-* **Curva de Aprendizado Inicial:** Exige um esforço maior na configuração inicial do projeto no GCP (setup de faturamento, projetos, APIs, IAM) em comparação com plataformas PaaS.
-* **Complexidade do Fluxo de Homologação:** A criação de ambientes de teste efêmeros (similares a PR Previews) é mais complexa de configurar no GCP, nos levando a adotar um ambiente de homologação persistente como abordagem inicial.
+* **Dívida Técnica:** A necessidade de uma futura migração é criada e deve ser gerenciada no backlog do projeto.
+* **Risco de Instabilidade:** Existe a chance de a aplicação apresentar problemas de performance ou memória no Render antes do planejado, forçando uma migração reativa.
+* **Inconsistência Temporária:** Durante a fase 1, a integração com o Google Sheets será menos segura (via arquivo de credenciais) do que a abordagem final planejada para o GCP.

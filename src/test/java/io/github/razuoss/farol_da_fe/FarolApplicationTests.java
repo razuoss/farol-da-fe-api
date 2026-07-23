@@ -1,10 +1,10 @@
-package io.github.fessrodrigues.farol_devocional;
+package io.github.razuoss.farol_da_fe;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FarolDevocionalApplicationTests {
+class FarolApplicationTests {
 
 	@Test
 	void contextLoads() {
