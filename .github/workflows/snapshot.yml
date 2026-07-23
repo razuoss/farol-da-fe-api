@@ -49,6 +49,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B sonar:sonar \
-            -Dsonar.projectKey=fessrodrigues_${{ github.event.repository.name }} \
-            -Dsonar.organization=fessrodrigues \
+            -Dsonar.projectKey=razuoss_${{ github.event.repository.name }} \
+            -Dsonar.organization=razuoss \
             -Dsonar.host.url=https://sonarcloud.io

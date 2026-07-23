@@ -1,8 +1,8 @@
-# Código de Conduta - Projeto Farol Devocional
+# Código de Conduta - Projeto Farol da Fé
 
 ## 1. Nosso Compromisso
 
-No interesse de fomentar uma comunidade aberta, acolhedora e edificante, nós, como contribuidores e mantenedores do projeto Farol Devocional, nos comprometemos a tornar a participação em nosso projeto uma experiência livre de assédio e positiva para todos, independentemente de idade, denominação, nível de experiência, nacionalidade, aparência pessoal, raça, ou identidade e expressão de gênero.
+No interesse de fomentar uma comunidade aberta, acolhedora e edificante, nós, como contribuidores e mantenedores do projeto Farol da Fé, nos comprometemos a tornar a participação em nosso projeto uma experiência livre de assédio e positiva para todos, independentemente de idade, denominação, nível de experiência, nacionalidade, aparência pessoal, raça, ou identidade e expressão de gênero.
 
 Nosso objetivo é criar um ambiente onde as interações sejam pautadas pelo amor cristão, pelo respeito mútuo e pelo desejo de edificar o Corpo de Cristo, conforme instruído nas Escrituras (Efésios 4:29).
 
@@ -33,7 +33,7 @@ O mantenedor do projeto é responsável por esclarecer os padrões de comportame
 
 ## 5. Escopo
 
-Este Código de Conduta se aplica a todos os espaços do projeto Farol Devocional, incluindo, mas não se limitando a: Issues, PRojects, Pull Requests, e qualquer outro canal de comunicação oficial do projeto.
+Este Código de Conduta se aplica a todos os espaços do projeto Farol da Fé, incluindo, mas não se limitando a: Issues, PRojects, Pull Requests, e qualquer outro canal de comunicação oficial do projeto.
 
 ## 6. Aplicação e Reporte
 
